@@ -23,7 +23,6 @@ import java.io.FileOutputStream
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var imageView: ImageView
     private lateinit var textView: TextView
     private lateinit var selectImageButton: Button
     private lateinit var processButton: Button
@@ -38,7 +37,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        imageView = findViewById(R.id.imageView)
         textView = findViewById(R.id.textView)
         selectImageButton = findViewById(R.id.selectImageButton)
         processButton = findViewById(R.id.processButton)
@@ -59,16 +57,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == IMAGE_PICK_CODE && resultCode == RESULT_OK) {
-            selectedImageUri = data?.data
-            imageView.setImageURI(selectedImageUri)
-        } else if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
-            val imageBitmap = data?.extras?.get("data") as Bitmap
-            selectedImageUri = getImageUri(imageBitmap)
-            imageView.setImageBitmap(imageBitmap)
+            super.onActivityResult(requestCode, resultCode, data)
+            if (requestCode == IMAGE_PICK_CODE && resultCode == RESULT_OK) {
+                val selectedImageUri = data?.data
+                val intent = Intent(this, Photo::class.java)
+                intent.putExtra("imageUri", selectedImageUri.toString())
+                startActivity(intent)
+            }
         }
-    }
 
     private fun getImageUri(bitmap: Bitmap): Uri {
         val tempDir = File(cacheDir, "tempImages")
